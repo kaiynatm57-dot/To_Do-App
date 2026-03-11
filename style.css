@@ -61,3 +61,35 @@ button:hover{
 #taskContainer{
     margin-top:20px;
 }
+.task{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:white;
+    color: #2193b0;
+    padding:10px;
+    margin:10px 0;
+    border-radius:6px;
+    box-shadow:0 2px 5px rgba(0,0,0,0.2);
+}
+/* Drag anchor */
+.drag{
+    cursor:grab;
+    margin-right:10px;
+}
+/* Task text */
+.task span{
+    flex:1;
+    text-align:left;
+}
+/* Action buttons */
+.task button{
+    margin-left:5px;
+    padding:5px 8px;
+    font-size:14px;
+}
+/* Completed task style */
+.completed{
+    text-decoration:line-through;
+    color:gray;
+}
