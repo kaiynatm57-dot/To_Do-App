@@ -25,17 +25,19 @@ function addTask() {
 }
 
 // Render tasks
-function renderTasks(){
+function renderTasks() {
     let container = document.getElementById("taskContainer");
     container.innerHTML = "";
 
+    // Group tasks by createdDate
     let grouped = {};
     tasks.forEach(task => {
-        if(!grouped[task.createdDate]) grouped[task.createdDate] = [];
+        if (!grouped[task.createdDate]) grouped[task.createdDate] = [];
         grouped[task.createdDate].push(task);
     });
 
-    for(let date in grouped){
+    for (let date in grouped) {
+        // Date header
         let dateTitle = document.createElement("h3");
         dateTitle.innerText = date;
         dateTitle.style.color = "#2193b0";
@@ -49,10 +51,19 @@ function renderTasks(){
             div.draggable = true;
             div.dataset.id = task.id;
 
+            // If task is completed, apply styles
+            let taskTextStyle = '';
+            let completeButton = `<button onclick="completeTask(${task.id})">&#x2714;</button>`;
+            if (task.status === "completed") {
+                taskTextStyle = 'text-decoration: line-through; color: #2193b0;';
+                completeButton = ''; // remove the Complete button
+                div.title = `Completed on: ${task.completedDate}`; // tooltip
+            }
+
             div.innerHTML = `
                 <span class="drag">&#x2630;</span>
-                <span>${task.text}</span>
-                <button onclick="completeTask(${task.id})">&#x2714;</button>
+                <span style="${taskTextStyle}">${task.text}</span>
+                ${completeButton}
                 <button onclick="editTask(${task.id})">&#x270E;</button>
                 <button onclick="deleteTask(${task.id})">&#x1F5D1;</button>
             `;
@@ -80,8 +91,10 @@ function editTask(id){
 }
 
 // Complete task
-function completeTask(id){
+function completeTask(id) {
     let task = tasks.find(t => t.id === id);
+    if (!task) return; // safety check if no task found
+
     task.status = "completed";
     task.completedDate = new Date().toLocaleDateString();
     saveTasks();
