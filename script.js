@@ -1,32 +1,111 @@
-let tasks=JSON.parse(localStorage.getItem("tasks"))||[];
-//save task
-function saveTasks(){
-localStorage.setItem("tasks",JSON.stringify(tasks));
+let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+// Save tasks
+function saveTasks() {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
 }
-//Add task
-function addTask(){
-    let input=document.getElementById("taskInput");
-    if(input.value.trim()==="") return;
-    let task={
-        id:Date.now(),
-        text:input.value,
-        createdDate:new Date().toLocaleDateString(),
-        status:"pending",
-        completedDate:null,
+
+// Add task
+function addTask() {
+    let input = document.getElementById("taskInput");
+    if(input.value.trim() === "") return;
+
+    let task = {
+        id: Date.now(),
+        text: input.value,
+        createdDate: new Date().toLocaleDateString(),
+        status: "pending",
+        completedDate: null
     };
+
     tasks.push(task);
     saveTasks();
-    input.value="";
+    input.value = "";
     renderTasks();
 }
-//Render/ Display task
+
+// Render tasks
 function renderTasks(){
-    let container=document.getElementById("taskcontainer");
-    container.innerHTML="";
-    let grouped={};
+    let container = document.getElementById("taskContainer");
+    container.innerHTML = "";
+
+    let grouped = {};
     tasks.forEach(task => {
-        if(!grouped[tasks.createdDate]) grouped[task.createdDate]=[];
-        grouped[task.createdDate].push(task)
-        
+        if(!grouped[task.createdDate]) grouped[task.createdDate] = [];
+        grouped[task.createdDate].push(task);
     });
+
+    for(let date in grouped){
+        let dateTitle = document.createElement("h3");
+        dateTitle.innerText = date;
+        dateTitle.style.color = "#2193b0";
+        dateTitle.style.fontSize = "18px";
+        dateTitle.style.textAlign = "center";
+        container.appendChild(dateTitle);
+
+        grouped[date].forEach(task => {
+            let div = document.createElement("div");
+            div.className = "task";
+            div.draggable = true;
+            div.dataset.id = task.id;
+
+            div.innerHTML = `
+                <span class="drag">&#x2630;</span>
+                <span>${task.text}</span>
+                <button onclick="completeTask(${task.id})">&#x2714;</button>
+                <button onclick="editTask(${task.id})">&#x270E;</button>
+                <button onclick="deleteTask(${task.id})">&#x1F5D1;</button>
+            `;
+            container.appendChild(div);
+        });
+    }
+}
+
+// Delete task
+function deleteTask(id){
+    tasks = tasks.filter(task => task.id !== id);
+    saveTasks();
+    renderTasks();
+}
+
+// Edit task
+function editTask(id){
+    let task = tasks.find(t => t.id === id);
+    let newText = prompt("Edit Task", task.text);
+    if(newText){
+        task.text = newText;
+        saveTasks();
+        renderTasks();
+    }
+}
+
+// Complete task
+function completeTask(id){
+    let task = tasks.find(t => t.id === id);
+    task.status = "completed";
+    task.completedDate = new Date().toLocaleDateString();
+    saveTasks();
+    renderTasks();
+}
+
+// Drag and drop
+let draggedTask = null;
+document.addEventListener("dragstart", function(e){
+    if(e.target.classList.contains("task")){
+        draggedTask = e.target;
+    }
+});
+document.addEventListener("dragover", function(e){
+    e.preventDefault();
+});
+document.addEventListener("drop", function(e){
+    if(e.target.classList.contains("task")){
+        let container = document.getElementById("taskContainer");
+        container.insertBefore(draggedTask, e.target);
+    }
+});
+
+// On load
+window.onload = function(){
+    renderTasks();
 }
