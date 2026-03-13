@@ -90,20 +90,49 @@ function completeTask(id){
 
 // Drag and drop
 let draggedTask = null;
+
+// Drag start
 document.addEventListener("dragstart", function(e){
     if(e.target.classList.contains("task")){
         draggedTask = e.target;
     }
 });
+
+// Allow drop
 document.addEventListener("dragover", function(e){
     e.preventDefault();
 });
+
+// Drop event
 document.addEventListener("drop", function(e){
     if(e.target.classList.contains("task")){
         let container = document.getElementById("taskContainer");
+
         container.insertBefore(draggedTask, e.target);
+
+        updateTaskOrder();
     }
 });
+// Update task order after drag and drop
+function updateTaskOrder(){
+
+    let taskElements = document.querySelectorAll(".task");
+    let newTasks = [];
+
+    taskElements.forEach(element => {
+
+        let id = Number(element.dataset.id);
+
+        let task = tasks.find(t => t.id === id);
+
+        newTasks.push(task);
+
+    });
+
+    tasks = newTasks;
+
+    saveTasks();
+}
 
 // On load
 window.onload = function(){
