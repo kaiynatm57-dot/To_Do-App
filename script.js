@@ -37,13 +37,7 @@ function renderTasks() {
     });
 
     for (let date in grouped) {
-        // Date header
-        let dateTitle = document.createElement("h3");
-        dateTitle.innerText = date;
-        dateTitle.style.color = "#2193b0";
-        dateTitle.style.fontSize = "18px";
-        dateTitle.style.textAlign = "center";
-        container.appendChild(dateTitle);
+      
 
         grouped[date].forEach(task => {
             let div = document.createElement("div");
