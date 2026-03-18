@@ -48,6 +48,10 @@ h1{
     border:1px solid #2193b0;
     outline:none;
 }
+#taskDateTime::-webkit-calendar-picker-indicator {
+    filter: invert(42%) sepia(93%) saturate(1352%) hue-rotate(160deg);
+    cursor: pointer;
+}
 
 
 /* Add button */
