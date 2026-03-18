@@ -8,12 +8,16 @@ function saveTasks() {
 // Add task
 function addTask() {
     let input = document.getElementById("taskInput");
+    let dateTimeInput = document.getElementById("taskDateTime");
+
     if(input.value.trim() === "") return;
+
+    let selectedDateTime = dateTimeInput.value;
 
     let task = {
         id: Date.now(),
         text: input.value,
-        createdDate: new Date().toLocaleDateString(),
+        createdDate: selectedDateTime ? selectedDateTime : new Date().toLocaleString(),
         status: "pending",
         completedDate: null
     };
@@ -21,6 +25,7 @@ function addTask() {
     tasks.push(task);
     saveTasks();
     input.value = "";
+    dateTimeInput.value = ""; // clear picker
     renderTasks();
 }
 
@@ -37,7 +42,6 @@ function renderTasks() {
     });
 
     for (let date in grouped) {
-      
 
         grouped[date].forEach(task => {
             let div = document.createElement("div");
@@ -45,22 +49,31 @@ function renderTasks() {
             div.draggable = true;
             div.dataset.id = task.id;
 
-            // If task is completed, apply styles
+            // Format date & time
+            let formattedDate = new Date(task.createdDate).toLocaleString();
+
+            // If task is completed
             let taskTextStyle = '';
             let completeButton = `<button onclick="completeTask(${task.id})">&#x2714;</button>`;
+
             if (task.status === "completed") {
                 taskTextStyle = 'text-decoration: line-through; color: #2193b0;';
-                completeButton = ''; // remove the Complete button
-                div.title = `Completed on: ${task.completedDate}`; // tooltip
+                completeButton = '';
+                div.title = `Completed on: ${task.completedDate}`;
             }
 
+            // ✅ UPDATED UI (text + date added)
             div.innerHTML = `
                 <span class="drag">&#x2630;</span>
                 <span style="${taskTextStyle}">${task.text}</span>
+                <small style="display:block; font-size:12px; color:gray;">
+                    📅 ${formattedDate}
+                </small>
                 ${completeButton}
                 <button onclick="editTask(${task.id})">&#x270E;</button>
                 <button onclick="deleteTask(${task.id})">&#x1F5D1;</button>
             `;
+
             container.appendChild(div);
         });
     }
