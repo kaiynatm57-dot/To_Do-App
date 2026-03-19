@@ -28,6 +28,9 @@ function addTask() {
     dateTimeInput.value = ""; // clear picker
     renderTasks();
 }
+flatpickr("#datePicker", {
+    enableTime: true
+});
 
 // Render tasks
 function renderTasks() {
@@ -62,12 +65,12 @@ function renderTasks() {
                 div.title = `Completed on: ${task.completedDate}`;
             }
 
-            // ✅ UPDATED UI (text + date added)
+            // RENDER UPDATED UI (text + date added)
             div.innerHTML = `
                 <span class="drag">&#x2630;</span>
                 <span style="${taskTextStyle}">${task.text}</span>
-                <small style="display:block; font-size:12px; color:gray;">
-                    📅 ${formattedDate}
+                <small style="display:block; font-size:12px; color:#2193b0;">
+                    &#x1F4C5; ${formattedDate}
                 </small>
                 ${completeButton}
                 <button onclick="editTask(${task.id})">&#x270E;</button>
